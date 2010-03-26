@@ -1,0 +1,28 @@
+Stretch jQuery Plugin:
+
+Expands text to fill up the entire width of its parent (or at least as much
+as possible). It does this in 2 ways. First, it finds the largest font-size
+for the text that can still fits on one line. If there is still some space
+left to fill, it will increase the gap between the words as well to fill the
+remaining space.
+
+For example, say we wanted to make the following title, "Sprockets and 
+Widgets" take up as much of the full 400px of width as possible:
+
+    <h1 style="width: 400px">Sprockets and Widgets</h1>
+    <script>
+        $("h1").contents().fillWidth();
+     </script>
+
+The actual implementation runs in O(log n) time, where n is the width of the
+container. This makes it more efficient than many existing solutions.
+
+License:
+
+The plugin is licensed under the ISC license. A copy of the license is included
+in the header of the plugin itself.
+
+Authors:
+
+Tom Switzer (thomas.switzer at gmail)
+
