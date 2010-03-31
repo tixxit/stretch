@@ -39,27 +39,36 @@ $.fn.stretch = function() {
         container.css("margin", "0").css("padding", "0");
         
         // Ensures we only work with 1 line.
+        
         container.css("white-space", "nowrap").css("overflow", "hidden");
         
         var idealWidth = container.width(),
+            width,
             min,
             max = 1;
         
         // Search for a minimum/maximum font size so we can bound our search.
+        
         do {
             min = max;
             max *= 2;
             container.css("font-size", max + "px");
-        } while (contents.width() < idealWidth);
+            
+            // If the width isn't changing, then avoid an infinite loop.
+            
+            width = contents.width() <= width ? idealWidth : contents.width();
+            
+        } while (width < idealWidth);
         
-        if (contents.width() == idealWidth)
+        if (width == idealWidth)
             return;
         
         // Perform a binary search to find the font-size closest to the ideal.
+        
         while (min < max) {
             var c = Math.floor((min + max) / 2);
             container.css("font-size", c + "px");
-            var width = contents.width();
+            width = contents.width();
             if (width == idealWidth)
                 break;
             if (width < idealWidth)
@@ -67,9 +76,14 @@ $.fn.stretch = function() {
             else
                 max = c;
         }
-        container.css("font-size", (min - 1) + "px");
+        
+        // We may end up on the wrong side of "perfect," so we fix this
+        
+        if (width > idealWidth)
+            container.css("font-size", (max - 1) + "px");
         
         // Adding a little bit of word spacing will bring us that much closer.
+        
         var spacing = 0,
             origWidth = contents.width();
         do {
@@ -78,6 +92,8 @@ $.fn.stretch = function() {
         } while (contents.width() <= idealWidth && contents.width() > origWidth);
         container.css("word-spacing", (spacing - 1) + "px");
     });
+    
+    return this;
 };
     
 })(jQuery);
