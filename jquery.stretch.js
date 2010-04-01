@@ -31,20 +31,25 @@
  *    $("h1").contents().fillWidth();
  *  </script>
  */
-$.fn.stretch = function() {
+$.fn.stretch = function(blah) {
     this.each(function() {
-        var contents = $(this).wrap("<span/>").parent(),
-            container = contents.wrap("<div/>").parent();
-        contents.css("margin", "0").css("padding", "0");
-        container.css("margin", "0").css("padding", "0");
+        var container = $(this),
+            contents = container.find("> .stretch--handle");
         
-        // Ensures we only work with 1 line.
+        if (!container.hasClass("stretch--resizer") || !contents) {
+            contents = $(this).wrap("<span class='stretch--handle' />").parent();
+            container = contents.wrap("<div class='stretch--resizer' />").parent();
+            contents.css("margin", "0").css("padding", "0");
+            container.css("margin", "0").css("padding", "0");
+            
+            // Ensures we only work with 1 line.
         
-        container.css("white-space", "nowrap").css("overflow", "hidden");
+            container.css("white-space", "nowrap").css("overflow", "hidden");
+        }
         
         var idealWidth = container.width(),
             width,
-            min,
+            min = 1,
             max = 1;
         
         // Search for a minimum/maximum font size so we can bound our search.
@@ -55,8 +60,8 @@ $.fn.stretch = function() {
             container.css("font-size", max + "px");
             
             // If the width isn't changing, then avoid an infinite loop.
-            
-            width = contents.width() <= width ? idealWidth : contents.width();
+            var realWidth = contents.width();
+            width = realWidth <= width ? idealWidth : realWidth;
             
         } while (width < idealWidth);
         
@@ -77,7 +82,7 @@ $.fn.stretch = function() {
                 max = c;
         }
         
-        // We may end up on the wrong side of "perfect," so we fix this
+        // We may end up on the wrong side of "perfect," so we fix this.
         
         if (width > idealWidth)
             container.css("font-size", (max - 1) + "px");
@@ -89,7 +94,8 @@ $.fn.stretch = function() {
         do {
             spacing += 1;
             container.css("word-spacing", spacing + "px");
-        } while (contents.width() <= idealWidth && contents.width() > origWidth);
+            width = contents.width();
+        } while (width <= idealWidth && width > origWidth);
         container.css("word-spacing", (spacing - 1) + "px");
     });
     

@@ -14,8 +14,7 @@ Widgets" take up as much of the full 400px of width as possible:
         $("h1").contents().stretch();
      </script>
 
-The actual implementation runs in O(log n) time, where n is the width of the
-container. This makes it more efficient than many existing solutions.
+The actual implementation runs in O(log n) time, where n is the final font size. This makes it more efficient than many existing solutions.
 
 License:
 
