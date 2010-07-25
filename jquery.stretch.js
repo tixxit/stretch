@@ -31,7 +31,11 @@
  *    $("h1").contents().fillWidth();
  *  </script>
  */
-$.fn.stretch = function(blah) {
+$.fn.stretch = function(opts) {
+	opts = $.extend({}, $.fn.stretch.defaults, opts);
+	if (!(opts.max >= 0) || !(opts.min >= 0))
+		opts.min = opts.max = 0;
+
     this.each(function() {
         var container = $(this),
             contents = container.find("> .stretch--handle");
@@ -49,21 +53,27 @@ $.fn.stretch = function(blah) {
         
         var idealWidth = container.width(),
             width,
-            min = 1,
-            max = 1;
+            min = opts.min || 1,
+            max = min;
         
         // Search for a minimum/maximum font size so we can bound our search.
         
-        do {
-            min = max;
-            max *= 2;
-            container.css("font-size", max + "px");
-            
-            // If the width isn't changing, then avoid an infinite loop.
-            var realWidth = contents.width();
-            width = realWidth <= width ? idealWidth : realWidth;
-            
-        } while (width < idealWidth);
+		if (!opts.max) {
+			do {
+				min = max;
+				max *= 2;
+				container.css("font-size", max + "px");
+				
+				// If the width isn't changing, then avoid an infinite loop.
+				var realWidth = contents.width();
+				width = realWidth <= width ? idealWidth : realWidth;
+				
+			} while (width < idealWidth);
+		} else {
+			max = opts.max;
+			if (min == max)
+				container.css("font-size", max + "px");
+		}
         
         if (width == idealWidth)
             return;
@@ -90,16 +100,23 @@ $.fn.stretch = function(blah) {
         // Adding a little bit of word spacing will bring us that much closer.
         
         var spacing = 0,
-            origWidth = contents.width();
+            origWidth = contents.width(),
+			maxSpacing = opts.maxSpacing;
         do {
             spacing += 1;
             container.css("word-spacing", spacing + "px");
             width = contents.width();
-        } while (width <= idealWidth && width > origWidth);
+        } while (spacing <= maxSpacing && width <= idealWidth && width > origWidth);
         container.css("word-spacing", (spacing - 1) + "px");
     });
     
     return this;
+};
+
+$.fn.stretch.defaults = {
+	min: 0,
+	max: 0,
+	maxSpacing: 0
 };
     
 })(jQuery);

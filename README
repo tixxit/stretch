@@ -16,6 +16,13 @@ Widgets" take up as much of the full 400px of width as possible:
 
 The actual implementation runs in O(log n) time, where n is the final font size. This makes it more efficient than many existing solutions.
 
+The plugin also takes an optional argument; a map of options. The possible
+properties are min, max, and maxSpacing. The min and max properties specify the
+min and max font size allowed. If 0, or omitted, then the minimum is 1, and the
+maximum is whatever size is necessary. The maxSpacing property can be used to
+set the maximum allowable amount of spacing between words (default is as large
+as needed).
+
 License:
 
 The plugin is licensed under the ISC license. A copy of the license is included
